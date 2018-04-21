@@ -3,6 +3,7 @@
 #include "LandlordFantasy.h"
 #include "NPCs/Npc.h"
 #include "Rooms/Globals/Items/Seat.h"
+#include "Rooms/IdleArea.h"
 #include "BedRoom.h"
 
 
@@ -28,8 +29,8 @@ void ABedRoom::BeginPlay()
 {
 	//Super::BeginPlay();
 
-	CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ABedRoom::OnPlayerEnterPickupBox); // begin overlap
-	CollisionBox->OnComponentEndOverlap.AddDynamic(this, &ABedRoom::OnPlayerLeavePickupBox); // end overlap
+	CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ABedRoom::OnPlayerEnterPickupBox);
+	CollisionBox->OnComponentEndOverlap.AddDynamic(this, &ABedRoom::OnPlayerLeavePickupBox);
 	
 }
 
@@ -40,10 +41,6 @@ void ABedRoom::Tick(float DeltaTime)
 
 }
 
-FVector ABedRoom::getLocationVec()
-{
-	return LocationVec;
-}
 
 // triggers enter bedroom room change in npc character
 void ABedRoom::OnPlayerEnterPickupBox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
@@ -54,35 +51,84 @@ void ABedRoom::OnPlayerEnterPickupBox(UPrimitiveComponent * OverlappedComp, AAct
 
 	if (PossibleNpc != NULL)
 	{
-		PossibleNpc->setInBedRoom(true);
+		FString Room = "BedRoom";
+		PossibleNpc->SetRoom(Room);		
 
-		int32 randomActorClass = 0;//!!! set to random number here when adding more interactable actors
+		//int32 randIndex = FMath::RandRange(0, FoundActors.Num() - 1);
 
-		if (randomActorClass == 0)
+		TArray <AActor*> OverlappingActors;
+
+		GetOverlappingActors(OverlappingActors); //get all actors in bedroom
+
+		for (auto OverLappedActor : OverlappingActors)
 		{
-			TArray <AActor*> OverlappingActors;
-			GetOverlappingActors(OverlappingActors);
-			//should set another random number here based on total number of actors
-			for (auto Seat : OverlappingActors)
+			ASeat* PossibleChair = Cast<ASeat>(OverLappedActor);
+			if (PossibleChair != NULL)
 			{
-				ASeat* PossibleChair = Cast<ASeat>(Seat);
-				if (PossibleChair != NULL)
-				{
-					PossibleNpc->SetTarget(Seat);
-					FVector ChairSitdownLocation = PossibleChair->GetLocationVec();
-					PossibleNpc->SetTargetVector(ChairSitdownLocation);
-				}
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, OtherActor->GetName() + "NPCOverlapbedroom");
+				Seats.Add(PossibleChair);
+			}				
 
-			}
-
+			AIdleArea* PossibleIdleSpot = Cast<AIdleArea>(OverLappedActor);
+			if (PossibleIdleSpot != NULL)
+				IdleAreas.Add(PossibleIdleSpot);
 
 		}
+
+		BedRoomInteract(PossibleNpc);
+
+		//for (auto Seat : OverlappingActors)
+		//{
+		//	ASeat* PossibleChair = Cast<ASeat>(Seat);
+		//	if (PossibleChair != NULL)
+		//	{
+		//		PossibleNpc->SetTarget(Seat);
+		//		FVector ChairSitdownLocation = PossibleChair->GetLocationVec();
+		//		PossibleNpc->SetTargetVector(ChairSitdownLocation);
+		//	}
+		//}
+
+
+		
 	}
 
 	//GetOverlappingActors(OverlappingActors);//return all overlapping actors
 
 }
 
+void ABedRoom::BedRoomInteract(ANpc* MyNpc)
+{
+	int32 TotalRoomActions = Seats.Num() + IdleAreas.Num(); //!!! should be a parent interactable class for all
+
+	int32 RandIndex = FMath::RandRange(0, 1);
+
+	switch (RandIndex)
+	{
+	case 0:
+		if (Seats.Num() > 0)
+		{
+			int32 VarIndex = FMath::RandRange(0, Seats.Num() - 1);
+			MyNpc->SetTarget(Seats[VarIndex]); //updates npc, AI, then Target<Object> blackboard
+			MyNpc->SetAction("Sit");
+		}
+
+		break;
+
+	case 1:
+		if (IdleAreas.Num() > 0)
+		{
+			int32 VarIndex = FMath::RandRange(0, IdleAreas.Num() - 1);
+			MyNpc->SetTarget(IdleAreas[VarIndex]);
+			MyNpc->SetAction("Idle");
+		}
+
+		break;
+
+	default:
+		break;//could be an idle for default???
+	}
+
+}
 // triggers leave bedroom room change in npc character
 void ABedRoom::OnPlayerLeavePickupBox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
@@ -92,20 +138,10 @@ void ABedRoom::OnPlayerLeavePickupBox(UPrimitiveComponent* OverlappedComp, AActo
 
 	if (PossibleNpc != NULL)
 	{
-		PossibleNpc->setInBedRoom(false);
 	}
 
 }
 
-void ABedRoom::FindSeat(float HealValue)
-{
-	TArray<AActor*> SeatsInZone;
 
-	GetOverlappingActors(SeatsInZone, TSubclassOf<ANpc>()); // need to change & crate Seat class
 
-	for (auto Seat : SeatsInZone)
-	{
-
-	}
-}
 

@@ -20,8 +20,12 @@ ASeat::ASeat()
 	CollisionBox->AttachToComponent(SeatRoot, FAttachmentTransformRules::KeepRelativeTransform); // attach to root component of PickupRoot
 
 	XSpot = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("XSpot"));
-	XSpot->AttachToComponent(SeatRoot, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	XSpot->SetRelativeScale3D(FVector(1.0f, 1.0f, 1.0f)); // set world scale according to new vector, relative to parent root
+	XSpot->SetRelativeLocation(FVector(1.0f, 1.0f, 1.0f));// relative to parent root
 	XSpot->SetHiddenInGame(true);//only show in editor for placement
+	XSpot->bGenerateOverlapEvents = false;
+	XSpot->AttachToComponent(SeatRoot, FAttachmentTransformRules::KeepRelativeTransform); // attach to root component of PickupRoot
+
 
 }
 
@@ -46,14 +50,26 @@ FVector ASeat::GetLocationVec()
 
 FVector ASeat::GetXSpotLocation()
 {
-	FVector XSpotLocation = XSpot->GetComponentLocation();
+	//FVector XSpotLocation = XSpot->GetComponentLocation();
 	return XSpotLocation;
+}
+
+void ASeat::SetXSpotLocation(FVector NewLocation)
+{
+	XSpotLocation = NewLocation;
 }
 
 FRotator ASeat::GetXSpotRotation()
 {
-	FRotator XSpotRotation = XSpot->GetComponentRotation();
+	//FRotator XSpotRotation = XSpot->GetComponentRotation();
 	return XSpotRotation;
 }
+
+void ASeat::SetXSpotRotation(FRotator NewRotation)
+{
+	XSpotRotation = NewRotation;
+}
+
+
 
 

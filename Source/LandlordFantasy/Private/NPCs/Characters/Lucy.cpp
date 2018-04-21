@@ -4,6 +4,7 @@
 #include "Lucy.h"
 #include "AI/NpcAI.h"
 #include "Rooms/Globals/Items/Seat.h"
+#include "Kismet/KismetMathLibrary.h"
 #include <string> 
 
 // Sets default values
@@ -48,8 +49,8 @@ void ALucy::BeginPlay()
 		MyTimeline->SetPlaybackPosition(0.0f, false);
 
 		//add the float curve to the timeline and connect to timeline interpolation function
-		onTimelineCallback.BindUFunction(this, FName{ TEXT("TimelineCallback") });//bind delegate
-		onTimelineFinishedCallback.BindUFunction(this, FName{ TEXT("TimelineFinishedCallback") });
+		onTimelineCallback.BindUFunction(this, FName{ TEXT("SitOnChairTimelineCallback") });//bind delegate
+		onTimelineFinishedCallback.BindUFunction(this, FName{ TEXT("SitOnChairTimelineFinishedCallback") });
 		MyTimeline->AddInterpFloat(FloatCurve, onTimelineCallback);
 		MyTimeline->SetTimelineFinishedFunc(onTimelineFinishedCallback);
 
@@ -73,7 +74,7 @@ void ALucy::Tick(float DeltaTime)
 }
 
 
-void ALucy::TimelineCallback(float interpolatedVal)
+void ALucy::SitOnChairTimelineCallback(float interpolatedVal)
 {
 
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::SanitizeFloat(interpolatedVal));
@@ -88,11 +89,12 @@ void ALucy::TimelineCallback(float interpolatedVal)
 	SetActorLocation(NewLocation);
 }
 
-void ALucy::TimelineFinishedCallback()
+void ALucy::SitOnChairTimelineFinishedCallback()
 {
+	SitOnChair();
 }
 
-void ALucy::PlayTimeline()
+void ALucy::SitOnChairPlayTimeline()
 {
 	//get location and rotation of npc
 	ActorInitialRotation = GetActorRotation();
@@ -100,15 +102,18 @@ void ALucy::PlayTimeline()
 
 	SetIsWalking(false); //disable walking before animation
 	SetIsInteracting(true);
-	GetMovementComponent()->SetActive(false); //disable movement before animation
-	ANpcAI* AIController = Cast<ANpcAI>(GetController()); // update AI which sets BlackBoard key
-	ASeat* PossibleSeat = Cast<ASeat>(AIController->GetTarget());
+	GetCharacterMovement()->SetMovementMode(MOVE_None);//disable movement before animation	
 
-	if (MyTimeline != NULL && PossibleSeat != NULL)//&& PossibleSeat != NULL
+	ANpcAI* AIController = Cast<ANpcAI>(GetController());
+	ASeat* PossibleSeat = Cast<ASeat>(AIController->GetTarget()); //get a target from the AI which is a seat
+
+	if (MyTimeline != NULL && PossibleSeat != NULL)
 	{
-		TargetRotation = ActorInitialRotation;
-		//TargetRotation.Yaw = ActorInitialRotation.Yaw + 90.0f;
+		//rotation based on orientation of seat
+		FVector SeatRightVector = PossibleSeat->GetActorRightVector();
+		TargetRotation = UKismetMathLibrary::MakeRotFromX(SeatRightVector);		
 
+		//location from static mesh marker in Seat
 		TargetLocation = PossibleSeat->GetXSpotLocation();
 		TargetLocation.Z += 50.0f; //adjust npc to a new height to fit on chair
 

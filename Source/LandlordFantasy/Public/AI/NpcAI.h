@@ -43,6 +43,14 @@ public:
 
 	UObject* GetTarget();
 
+	void SetCurrentRoom(FString InString);
+
+	FString GetCurrentRoom();
+
+	void SetCurrentAction(FString InString);
+
+	FString GetCurrentAction();
+
 	void SetTargetVector(FVector location);
 
 	class AOutdoorTriggerBox* GetOutdoorBox() const;
@@ -54,8 +62,6 @@ public:
 	AActor* GetNearestActor(TArray<AActor*> FoundActors);
 
 	void setIsInside(bool inside);
-
-	void SetIsInBedroom(bool bedroom);
 
 	void SetIsInteracting(bool interacting);
 
@@ -77,9 +83,7 @@ protected:
 	int32 IndoorBoxID;
 	int32 SelfActor;
 	int32 IsInside;
-	int32 IsInBedroom;
 	int32 IsInteracting;
-
 
 
 public:

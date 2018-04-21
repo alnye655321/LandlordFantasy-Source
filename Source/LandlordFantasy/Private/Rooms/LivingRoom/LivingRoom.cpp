@@ -55,7 +55,6 @@ void ALivingRoom::OnPlayerEnterPickupBox(UPrimitiveComponent * OverlappedComp, A
 
 	if (PossibleNpc != NULL)
 	{
-		PossibleNpc->setInLivingRoom(true);
 	}
 
 

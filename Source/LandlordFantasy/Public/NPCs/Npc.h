@@ -31,10 +31,6 @@ public:
 	bool isWalking;
 	bool IsInteracting;
 	bool isInside;
-	bool inKitchen;
-	bool inFamilyRoom;
-	bool inLivingRoom;
-	bool inBedRoom;
 
 	UFUNCTION(BlueprintCallable, Category = "LandlordAI")
 		void facePlayer();
@@ -65,30 +61,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "LandlordNPC")
 		void setIsInside(bool outside);
 
-	UFUNCTION(BlueprintCallable, Category = "LandlordNPC")
-		bool getInKitchen();
+	void SetRoom(FString Room);
 
-	UFUNCTION(BlueprintCallable, Category = "LandlordNPC")
-		void setInKitchen(bool kitchen);
-
-	UFUNCTION(BlueprintCallable, Category = "LandlordNPC")
-		bool getInFamilyRoom();
-
-	UFUNCTION(BlueprintCallable, Category = "LandlordNPC")
-		void setInFamilyRoom(bool familyRoom);
-
-	UFUNCTION(BlueprintCallable, Category = "LandlordNPC")
-		bool getInLivingRoom();
-
-	UFUNCTION(BlueprintCallable, Category = "LandlordNPC")
-		void setInLivingRoom(bool livingRoom);
-
-	UFUNCTION(BlueprintCallable, Category = "LandlordNPC")
-		bool getInBedRoom();
-
-	UFUNCTION(BlueprintCallable, Category = "LandlordNPC")
-		void setInBedRoom(bool bedRoom);
-
+	void SetAction(FString Action);
 	
 	
 };

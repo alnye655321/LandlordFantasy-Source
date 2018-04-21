@@ -22,6 +22,10 @@ void ANpc::BeginPlay()
 
 	ANpcAI* AIController = Cast<ANpcAI>(GetController());
 
+	//in behavior tree setting room to none means move to a new room
+	FString NoRoom = "None"; //find a room to begin play
+	SetRoom(NoRoom);
+
 	TArray<AActor*> FoundActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AOutdoorTriggerBox::StaticClass(), FoundActors);
 
@@ -37,10 +41,6 @@ void ANpc::BeginPlay()
 	isWalking = true;
 	IsInteracting = false;
 	isInside = false; // !!! have a check, all npcs may not start outside
-	inKitchen = false;
-	inFamilyRoom = false;
-	inLivingRoom = false;
-	inBedRoom = false;
 	
 }
 
@@ -107,47 +107,18 @@ void ANpc::setIsInside(bool inside)
 	AIController->setIsInside(inside);
 }
 
-bool ANpc::getInKitchen()
+void ANpc::SetRoom(FString Room)
 {
-	return inKitchen;
-}
-
-void ANpc::setInKitchen(bool kitchen)
-{
-	inKitchen = kitchen;
-}
-
-bool ANpc::getInFamilyRoom()
-{
-	return inFamilyRoom;
-}
-
-void ANpc::setInFamilyRoom(bool familyRoom)
-{
-	inFamilyRoom = familyRoom;
-}
-
-bool ANpc::getInLivingRoom()
-{
-	return inLivingRoom;
-}
-
-void ANpc::setInLivingRoom(bool livingRoom)
-{
-	inLivingRoom = livingRoom;
-}
-
-bool ANpc::getInBedRoom()
-{
-	return inBedRoom;
-}
-
-void ANpc::setInBedRoom(bool bedRoom)
-{
-	inBedRoom = bedRoom;
 
 	ANpcAI* AIController = Cast<ANpcAI>(GetController()); // update AI which sets BlackBoard key
-	AIController->SetIsInBedroom(bedRoom);
+	AIController->SetCurrentRoom(Room);
+}
+
+void ANpc::SetAction(FString Action)
+{
+
+	ANpcAI* AIController = Cast<ANpcAI>(GetController()); // update AI which sets BlackBoard key
+	AIController->SetCurrentAction(Action);
 }
 
 void ANpc::facePlayer()

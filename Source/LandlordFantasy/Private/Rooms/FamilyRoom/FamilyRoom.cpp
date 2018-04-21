@@ -54,7 +54,6 @@ void AFamilyRoom::OnPlayerEnterPickupBox(UPrimitiveComponent * OverlappedComp, A
 
 	if (PossibleNpc != NULL)
 	{
-		PossibleNpc->setInFamilyRoom(true);
 	}
 
 

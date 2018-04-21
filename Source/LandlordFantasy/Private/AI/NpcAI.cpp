@@ -52,7 +52,6 @@ void ANpcAI::Possess(APawn * InPawn)
 		IndoorBoxID = BlackboardComp->GetKeyID("IndoorBox");
 		SelfActor = BlackboardComp->GetKeyID("SelfActor");
 		IsInside = BlackboardComp->GetKeyID("IsInside");
-		IsInBedroom = BlackboardComp->GetKeyID("IsInBedroom");
 		IsInteracting = BlackboardComp->GetKeyID("IsInteracting");
 
 		BehaviorComp->StartTree(*(Bot->BotBehavior));
@@ -97,15 +96,6 @@ void ANpcAI::setIsInside(bool inside)
 	}
 }
 
-void ANpcAI::SetIsInBedroom(bool bedroom)
-{
-	if (BlackboardComp)
-	{
-		BlackboardComp->SetValue<UBlackboardKeyType_Bool>(IsInBedroom, bedroom);
-	}
-
-}
-
 void ANpcAI::SetIsInteracting(bool interacting)
 {
 	if (BlackboardComp)
@@ -137,12 +127,50 @@ UObject* ANpcAI::GetTarget()
 	//UObject* test = nullptr;
 	if (BlackboardComp)
 	{
-		UObject *FoundObject = BlackboardComp->GetValue<UBlackboardKeyType_Object>(Target);//get blackboard value as object
+		UObject *FoundObject = BlackboardComp->GetValue<UBlackboardKeyType_Object>(Target); //get blackboard value as object
 		return FoundObject;
 	}
 	else
 		return NULL;
 
+}
+
+void ANpcAI::SetCurrentRoom(FString InString)
+{
+	if (BlackboardComp)
+	{
+		BlackboardComp->SetValueAsString("CurrentRoom", InString);
+	}
+}
+
+FString ANpcAI::GetCurrentRoom()
+{
+	if (BlackboardComp)
+	{
+		FString FoundString = BlackboardComp->GetValueAsString("CurrentRoom");
+		return FoundString;
+	}
+	else
+		return "";
+}
+
+void ANpcAI::SetCurrentAction(FString InString)
+{
+	if (BlackboardComp)
+	{
+		BlackboardComp->SetValueAsString("CurrentAction", InString);
+	}
+}
+
+FString ANpcAI::GetCurrentAction()
+{
+	if (BlackboardComp)
+	{
+		FString FoundString = BlackboardComp->GetValueAsString("CurrentAction");
+		return FoundString;
+	}
+	else
+		return "";
 }
 
 void ANpcAI::SetTargetVector(FVector location)
@@ -203,7 +231,3 @@ AActor* ANpcAI::GetNearestActor(TArray<AActor*> FoundActors)
 	}
 	return nearestActor;
 }
-
-
-
-

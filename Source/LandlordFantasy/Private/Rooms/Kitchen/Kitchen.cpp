@@ -51,7 +51,6 @@ void AKitchen::OnPlayerEnterPickupBox(UPrimitiveComponent * OverlappedComp, AAct
 
 	if (PossibleNpc != NULL)
 	{
-		PossibleNpc->setInKitchen(true);
 	}
 
 

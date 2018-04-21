@@ -43,7 +43,18 @@ public:
 		FVector GetXSpotLocation();
 
 	UFUNCTION(BlueprintCallable, Category = "Seats")
+		void SetXSpotLocation(FVector NewLocation);
+
+	UFUNCTION(BlueprintCallable, Category = "Seats")
 		FRotator GetXSpotRotation();
+
+	UFUNCTION(BlueprintCallable, Category = "Seats")
+		void SetXSpotRotation(FRotator NewRotation);
+
+private:
+
+	FVector XSpotLocation;
+	FRotator XSpotRotation;
 	
 	
 };

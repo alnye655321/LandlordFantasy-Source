@@ -35,15 +35,19 @@ protected:
 		UCurveFloat* FloatCurve;
 
 	UFUNCTION()
-		void TimelineCallback(float interpolatedVal);
+		void SitOnChairTimelineCallback(float interpolatedVal);
 
 	UFUNCTION()
-		void TimelineFinishedCallback();
+		void SitOnChairTimelineFinishedCallback();
 
-	void PlayTimeline();
+	UFUNCTION(BlueprintCallable, Category = "LandlordNPC")
+		void SitOnChairPlayTimeline();
 
 	UPROPERTY()
 		TEnumAsByte<ETimelineDirection::Type> TimelineDirection;
+
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "SitOnChair_FromCpp"))
+		void SitOnChair();
 
 private:
 
