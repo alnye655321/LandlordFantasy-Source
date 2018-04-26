@@ -41,7 +41,8 @@ public:
 
 	void SetTarget(AActor * InActor);
 
-	UObject* GetTarget();
+	UFUNCTION(BlueprintCallable, Category = "LandlordAI")
+		UObject* GetTarget();
 
 	void SetCurrentRoom(FString InString);
 
@@ -55,7 +56,7 @@ public:
 
 	class AOutdoorTriggerBox* GetOutdoorBox() const;
 
-	void SetIndoorBox(AIndoorTriggerBox * InActor);
+	void SetIndoorBox(AIndoorTriggerBox* InActor);
 
 	AIndoorTriggerBox * GetIndoorBox() const;
 

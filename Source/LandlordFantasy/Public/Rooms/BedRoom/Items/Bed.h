@@ -3,20 +3,20 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
-#include "Kitchen.generated.h"
+#include "Rooms/Globals/Items/FurnitureItem.h"
+#include "Bed.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class LANDLORDFANTASY_API AKitchen : public AActor
+class LANDLORDFANTASY_API ABed : public AFurnitureItem
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this actor's properties
-	AKitchen();
+	ABed();
 
 protected:
 	// Called when the game starts or when spawned
@@ -29,21 +29,28 @@ public:
 	// root component for everything else to be attached to
 	// A SceneComponent has a transform and supports attachment, but has no rendering or collision capabilities. Useful as a 'dummy' component in the hierarchy to offset others
 	UPROPERTY(EditAnywhere)
-		USceneComponent* KitchenTriggerRoot;
+		USceneComponent* BedRoot;
 
 	// collision box
 	UPROPERTY(EditAnywhere)
 		UShapeComponent* CollisionBox;
 
-	// called when player enters the box
-	UFUNCTION()
-		void OnPlayerEnterPickupBox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION(BlueprintCallable, Category = "Beds")
+		FVector GetXSpotLocation();
 
+	UFUNCTION(BlueprintCallable, Category = "Beds")
+		void SetXSpotLocation(FVector NewLocation);
 
+	UFUNCTION(BlueprintCallable, Category = "Beds")
+		FRotator GetXSpotRotation();
+
+	UFUNCTION(BlueprintCallable, Category = "Beds")
+		void SetXSpotRotation(FRotator NewRotation);
 
 private:
 
-	FVector LocationVec;
+	FVector XSpotLocation;
+	FRotator XSpotRotation;
 	
 	
 	

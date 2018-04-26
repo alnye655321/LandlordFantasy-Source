@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "NPCs/Npc.h"
+#include "Rooms/BedRoom/Items/Bed.h"
 #include "Lucy.generated.h"
 
 /**
@@ -21,6 +22,8 @@ public:
 	// Tick is enabled
 	virtual void Tick(float DeltaTime);
 
+	void TriggerLayOnBedAnim(ABed* Bed);
+
 
 protected:
 
@@ -29,7 +32,7 @@ protected:
 
 	//Curves
 	UPROPERTY()
-		UTimelineComponent* MyTimeline;
+		UTimelineComponent* MyTimeline; //is actually SitTimline, started with this name :( good luck getting unreal to recognize a change!
 
 	UPROPERTY()
 		UCurveFloat* FloatCurve;
@@ -43,11 +46,19 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "LandlordNPC")
 		void SitOnChairPlayTimeline();
 
+	void AnimationMovementSetup();
+
+
 	UPROPERTY()
 		TEnumAsByte<ETimelineDirection::Type> TimelineDirection;
 
+
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "SitOnChair_FromCpp"))
 		void SitOnChair();
+
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "LayOnBed_FromCpp"))
+		void LayOnBed(ABed* Bed);
+
 
 private:
 

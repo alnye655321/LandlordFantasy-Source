@@ -2,17 +2,18 @@
 
 #pragma once
 
+#include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "IndoorTriggerBox.generated.h"
+#include "FurnitureItem.generated.h"
 
 UCLASS()
-class LANDLORDFANTASY_API AIndoorTriggerBox : public AActor
+class LANDLORDFANTASY_API AFurnitureItem : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AIndoorTriggerBox();
+	AFurnitureItem();
 
 protected:
 	// Called when the game starts or when spawned

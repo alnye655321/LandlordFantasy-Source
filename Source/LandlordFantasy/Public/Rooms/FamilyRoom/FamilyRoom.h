@@ -32,9 +32,6 @@ public:
 	UPROPERTY(EditAnywhere)
 		UShapeComponent* CollisionBox;
 
-	UFUNCTION(BlueprintCallable, Category = "FamilyRoom")
-		FVector getLocationVec();
-
 	// called when player enters the box
 	UFUNCTION()
 		void OnPlayerEnterPickupBox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

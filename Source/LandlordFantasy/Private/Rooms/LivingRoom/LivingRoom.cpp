@@ -41,11 +41,6 @@ void ALivingRoom::Tick(float DeltaTime)
 
 }
 
-FVector ALivingRoom::getLocationVec()
-{
-	return LocationVec;
-}
-
 // triggers in living room change in npc character
 void ALivingRoom::OnPlayerEnterPickupBox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {

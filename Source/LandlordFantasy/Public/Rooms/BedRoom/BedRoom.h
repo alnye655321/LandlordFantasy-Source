@@ -42,13 +42,19 @@ public:
 		void OnPlayerLeavePickupBox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	UFUNCTION(BlueprintCallable, Category = "BedRoom")
-		void BedRoomInteract(ANpc* MyNpc);
+		void BedRoomInteract(ANpc* MyNpc, UObject* LastTarget);
+
+	
+	void NewTargetAction(UObject * LastTarget, const int32 &VarIndex, ANpc * MyNpc, FString Action);
+
+
 
 
 private:
 
 	TArray <AActor*> Seats;
 	TArray <AActor*> IdleAreas;
+	TArray <AActor*> Beds;
 	
 	
 };

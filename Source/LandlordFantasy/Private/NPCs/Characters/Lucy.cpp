@@ -4,6 +4,7 @@
 #include "Lucy.h"
 #include "AI/NpcAI.h"
 #include "Rooms/Globals/Items/Seat.h"
+#include "Rooms/BedRoom/Items/Bed.h"
 #include "Kismet/KismetMathLibrary.h"
 #include <string> 
 
@@ -15,13 +16,14 @@ ALucy::ALucy()
 
 	ANpcAI* AIController = Cast<ANpcAI>(GetController());//TODO not used yet
 
-														 //get curve from editor for use as timeline
+	//get curve from editor for use as timeline
 	static ConstructorHelpers::FObjectFinder<UCurveFloat> Curve(TEXT("/Game/GR_Stylized_Female_01/Character/Animations/Curves/CurveQuick"));
 	check(Curve.Succeeded());
 
 	FloatCurve = Curve.Object;
 
 }
+
 
 void ALucy::BeginPlay()
 {
@@ -31,9 +33,10 @@ void ALucy::BeginPlay()
 
 	Super::BeginPlay();
 
-	//timeline curve
+	//sit timeline curve
 	if (FloatCurve != NULL)
 	{
+		//sit timeline
 		MyTimeline = NewObject<UTimelineComponent>(this, FName("TimelineAnimation"));
 		MyTimeline->CreationMethod = EComponentCreationMethod::UserConstructionScript; // indicate it comes from a blueprint so it gets cleared when we rerun construction scripts
 		this->BlueprintCreatedComponents.Add(MyTimeline); // add to array so it gets saved
@@ -55,30 +58,35 @@ void ALucy::BeginPlay()
 		MyTimeline->SetTimelineFinishedFunc(onTimelineFinishedCallback);
 
 		MyTimeline->RegisterComponent();
-		//PlayTimeline();
+
 	}
 
 }
+
 
 void ALucy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "lucy debug msg");
 
-	//timeline curve
+	//sit timeline
 	if (MyTimeline != NULL)
 	{
 		MyTimeline->TickComponent(DeltaTime, ELevelTick::LEVELTICK_TimeOnly, NULL);
 	}
 
+
+
+}
+
+void ALucy::TriggerLayOnBedAnim(ABed* Bed)
+{
+	LayOnBed(Bed);
 }
 
 
 void ALucy::SitOnChairTimelineCallback(float interpolatedVal)
 {
-
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::SanitizeFloat(interpolatedVal));
-
 	//set actor rotation based on curve
 	FRotator NewRotation = FMath::Lerp(ActorInitialRotation, TargetRotation, interpolatedVal);
 
@@ -89,20 +97,16 @@ void ALucy::SitOnChairTimelineCallback(float interpolatedVal)
 	SetActorLocation(NewLocation);
 }
 
+
 void ALucy::SitOnChairTimelineFinishedCallback()
 {
 	SitOnChair();
 }
 
-void ALucy::SitOnChairPlayTimeline()
-{
-	//get location and rotation of npc
-	ActorInitialRotation = GetActorRotation();
-	ActorInitialLocation = GetActorLocation();
 
-	SetIsWalking(false); //disable walking before animation
-	SetIsInteracting(true);
-	GetCharacterMovement()->SetMovementMode(MOVE_None);//disable movement before animation	
+void ALucy::SitOnChairPlayTimeline()
+{	
+	AnimationMovementSetup();
 
 	ANpcAI* AIController = Cast<ANpcAI>(GetController());
 	ASeat* PossibleSeat = Cast<ASeat>(AIController->GetTarget()); //get a target from the AI which is a seat
@@ -119,6 +123,17 @@ void ALucy::SitOnChairPlayTimeline()
 
 		MyTimeline->PlayFromStart();
 	}
+}
+
+//get location and rotation of npc
+void ALucy::AnimationMovementSetup()
+{
+	ActorInitialRotation = GetActorRotation();
+	ActorInitialLocation = GetActorLocation();
+
+	SetIsWalking(false); //disable walking before animation
+	SetIsInteracting(true);
+	GetCharacterMovement()->SetMovementMode(MOVE_None);//disable movement before animation	
 }
 
 

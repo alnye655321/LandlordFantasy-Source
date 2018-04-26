@@ -31,8 +31,6 @@ public:
 	UPROPERTY(EditAnywhere)
 		UShapeComponent* CollisionBox;
 
-	UFUNCTION(BlueprintCallable, Category = "OutdoorTriggerBox")
-		FVector getLocationVec();
 
 	// called when player enters the box
 	UFUNCTION()

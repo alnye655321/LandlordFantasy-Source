@@ -37,11 +37,6 @@ void AKitchen::Tick(float DeltaTime)
 
 }
 
-FVector AKitchen::getLocationVec()
-{
-	return LocationVec;
-}
-
 // triggers in kitchen change in npc character
 void AKitchen::OnPlayerEnterPickupBox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {

@@ -40,11 +40,6 @@ void AFamilyRoom::Tick(float DeltaTime)
 
 }
 
-FVector AFamilyRoom::getLocationVec()
-{
-	return LocationVec;
-}
-
 // triggers in family room change in npc character
 void AFamilyRoom::OnPlayerEnterPickupBox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {

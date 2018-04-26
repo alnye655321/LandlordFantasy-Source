@@ -32,12 +32,6 @@ public:
 	UPROPERTY(EditAnywhere)
 		UShapeComponent* CollisionBox;
 
-	// Static mesh for action trigger location
-	UPROPERTY(EditAnywhere)
-		UStaticMeshComponent* XSpot;
-
-	UFUNCTION(BlueprintCallable, Category = "Seats")
-		FVector GetLocationVec();
 
 	UFUNCTION(BlueprintCallable, Category = "Seats")
 		FVector GetXSpotLocation();

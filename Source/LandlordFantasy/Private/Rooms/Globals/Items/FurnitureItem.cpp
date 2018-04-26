@@ -1,12 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "LandlordFantasy.h"
-#include "NPCs/Npc.h"
-#include "IndoorTriggerBox.h"
+#include "FurnitureItem.h"
 
 
 // Sets default values
-AIndoorTriggerBox::AIndoorTriggerBox()
+AFurnitureItem::AFurnitureItem()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -14,14 +13,14 @@ AIndoorTriggerBox::AIndoorTriggerBox()
 }
 
 // Called when the game starts or when spawned
-void AIndoorTriggerBox::BeginPlay()
+void AFurnitureItem::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
 // Called every frame
-void AIndoorTriggerBox::Tick(float DeltaTime)
+void AFurnitureItem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
