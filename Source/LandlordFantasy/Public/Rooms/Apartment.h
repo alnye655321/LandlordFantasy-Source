@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Rooms/Room.h"
 #include "Apartment.generated.h"
 
 UCLASS()
@@ -31,6 +32,19 @@ public:
 	// collision box
 	UPROPERTY(EditAnywhere)
 		UShapeComponent* ApartmentCollisionBox;
-	
-	
+
+	// called when player enters the box
+	UFUNCTION()
+		void OnPlayerEnterPickupBox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	//gets all possible rooms, send to npc, which then goes to AI
+	void SendToRoom(AActor * OtherActor);
+
+	// called when player leaves the box
+	UFUNCTION()
+		void OnPlayerLeavePickupBox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+private:
+
+	TArray <AActor*> RoomsInApartment;
 };

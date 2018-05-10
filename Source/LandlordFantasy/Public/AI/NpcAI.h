@@ -44,11 +44,21 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "LandlordAI")
 		UObject* GetTarget();
 
+	UObject * GetSelf();
+
 	void SetCurrentRoom(FString InString);
 
 	FString GetCurrentRoom();
 
+	void SetFindRoom(FString InString);
+
+	FString GetFindRoom();
+
 	void SetCurrentAction(FString InString);
+
+	FString GetDesiredRoomKey();
+
+	void SetDesiredRoomKey(FString InString);
 
 	FString GetCurrentAction();
 
@@ -66,7 +76,10 @@ public:
 
 	void SetIsInteracting(bool interacting);
 
+	void DesiredRoom(TMap<FString, int32> NeedsMap, TArray <AActor*> RoomsInApartment);
+
 	int32 getRandOutdoorEntry(); // set random int for picking from entry box array at the moment
+
 	void setRandOutdoorEntry(int32 setInt);
 
 	UFUNCTION(BlueprintCallable, Category = "LandlordAI")
@@ -85,6 +98,8 @@ protected:
 	int32 SelfActor;
 	int32 IsInside;
 	int32 IsInteracting;
+	int32 DesiredRoomKey;
+	int32 FindRoom;
 
 
 public:

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "NPCs/Npc.h"
 #include "Rooms/BedRoom/Items/Bed.h"
+#include "Globals/DoorActor.h"
 #include "Lucy.generated.h"
 
 /**
@@ -24,6 +25,11 @@ public:
 
 	void TriggerLayOnBedAnim(ABed* Bed);
 
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "DoorPosition_FromCpp"))
+		void DoorPosition(ADoorActor* Door);
+
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "WalkThruDoor_FromCpp"))
+		void WalkThruDoor();
 
 protected:
 

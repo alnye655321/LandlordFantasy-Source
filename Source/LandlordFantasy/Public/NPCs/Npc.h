@@ -55,15 +55,35 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "LandlordNPC")
 		void SetIsInteracting(bool IsInteractingCondition);
 
+	void SetAIFindRoom(FString NewStringCondition);
+
 	UFUNCTION(BlueprintCallable, Category = "LandlordNPC")
 		bool getIsInside();
 
 	UFUNCTION(BlueprintCallable, Category = "LandlordNPC")
 		void setIsInside(bool outside);
 
+	UFUNCTION(BlueprintCallable, Category = "LandlordNPC")
+		FVector AnimPositionVector(AActor* MyTargetActor, float ForwardOffset, float RightOffset, float UpOffset);
+
+	UFUNCTION(BlueprintCallable, Category = "LandlordNPC")
+		FRotator AnimPositionRotator(AActor* MyTargetActor, float OffsetRoll, float OffsetPitch, float OffsetYaw);
+
+	void ChooseRoomDestination(TArray <AActor*> RoomsInApartment);
+
 	void SetRoom(FString Room);
 
+	void SetDesiredRoom(FString Room);
+
+	FString GetDesiredRoom();
+
 	void SetAction(FString Action);
+
+
+private:
+	AActor * TargetActor;
+
+	TMap<FString, int32> NeedsMap;
 	
 	
 };

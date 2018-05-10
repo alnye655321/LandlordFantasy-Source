@@ -6,10 +6,12 @@
 #include "GameFramework/Actor.h"
 #include "NPCs/Npc.h"
 #include "Rooms/BedRoom/Items/Bed.h"
+#include "Rooms/MyTimelineBase.h"
+#include <string>
 #include "BedTimeline.generated.h"
 
 UCLASS()
-class LANDLORDFANTASY_API ABedTimeline : public AActor
+class LANDLORDFANTASY_API ABedTimeline : public AMyTimelineBase
 {
 	GENERATED_BODY()
 	
@@ -24,38 +26,27 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	//Curves
-	UPROPERTY()
-		UTimelineComponent* MyTimeline;
-
 	UPROPERTY()
 		UCurveFloat* FloatCurve;
-
+		
 	UFUNCTION()
 		void TimelineCallback(float interpolatedVal);
 
 	UFUNCTION()
 		void TimelineFinishedCallback();
 
-	void AnimationMovementSetup(ANpc* Npc);
 
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// root component for everything else to be attached to
-	// A SceneComponent has a transform and supports attachment, but has no rendering or collision capabilities. Useful as a 'dummy' component in the hierarchy to offset others
-	UPROPERTY(EditAnywhere)
-		USceneComponent* BedTimelineRoot;
-
-	// collision box
-	UPROPERTY(EditAnywhere)
-		UShapeComponent* CollisionBox;
 
 private:
 	ANpc* MyNpc;
 	ABed* MyBed;
+
+	UTimelineComponent* BedTimelineComp;
 
 
 	//initial rotation

@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Rooms/Room.h"
 #include "Kitchen.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class LANDLORDFANTASY_API AKitchen : public AActor
+class LANDLORDFANTASY_API AKitchen : public ARoom
 {
 	GENERATED_BODY()
 
@@ -39,11 +40,15 @@ public:
 	UFUNCTION()
 		void OnPlayerEnterPickupBox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	void NewTargetAction(UObject * LastTarget, const int32 &VarIndex, ANpc * MyNpc, FString Action);
 
+	UFUNCTION(BlueprintCallable, Category = "Kitchen")
+		void KitchenInteract(ANpc* MyNpc, UObject* LastTarget);
 
 private:
 
-	FVector LocationVec;
+	TArray <AActor*> Seats;
+	TArray <AActor*> IdleAreas;
 	
 	
 	

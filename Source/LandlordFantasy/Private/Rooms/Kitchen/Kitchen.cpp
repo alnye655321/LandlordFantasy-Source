@@ -1,8 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "LandlordFantasy.h"
+#include "Kitchen.h"
 #include "NPCs/Npc.h"
 #include "Kitchen.h"
+#include "Rooms/IdleArea.h"
+#include "Rooms/Globals/Items/Seat.h"
+#include "Rooms/RoomEntryPoint.h"
 
 // Sets default values
 AKitchen::AKitchen()
@@ -24,9 +28,25 @@ AKitchen::AKitchen()
 // Called when the game starts or when spawned
 void AKitchen::BeginPlay()
 {
-	LocationVec = GetActorLocation();
-
 	CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &AKitchen::OnPlayerEnterPickupBox); // on the overlap
+
+	//set entry point as X Spot RoomEntryPoint actor - will use for move to AI actions entering room
+	TArray <AActor*> OverlappingActors;
+
+	GetOverlappingActors(OverlappingActors);
+
+	for (auto OverlappingActor : OverlappingActors)
+	{
+		ARoomEntryPoint* PossibleEntryPoint = Cast<ARoomEntryPoint>(OverlappingActor);
+
+		if (PossibleEntryPoint != NULL)
+		{
+			SetXSpotLocation(PossibleEntryPoint);
+			break;
+		}
+
+	}
+
 
 }
 
@@ -44,11 +64,116 @@ void AKitchen::OnPlayerEnterPickupBox(UPrimitiveComponent * OverlappedComp, AAct
 
 	ANpc* PossibleNpc = Cast<ANpc>(OtherActor);
 
-	if (PossibleNpc != NULL)
+	if (PossibleNpc != NULL && PossibleNpc->GetDesiredRoom() == "Kitchen")
 	{
-	}
+		FString AIFindRoom = "found";
+		PossibleNpc->SetAIFindRoom(AIFindRoom); //no longer looking for rooms in BT
 
+		FString Room = "Kitchen";
+		PossibleNpc->SetRoom(Room);
+
+		TArray <AActor*> OverlappingActors;
+
+		GetOverlappingActors(OverlappingActors); //get all actors in kitchen
+
+		for (auto OverLappedActor : OverlappingActors)
+		{
+			ASeat* PossibleChair = Cast<ASeat>(OverLappedActor);
+			if (PossibleChair != NULL)
+				Seats.Add(PossibleChair);
+
+			AIdleArea* PossibleIdleSpot = Cast<AIdleArea>(OverLappedActor);
+			if (PossibleIdleSpot != NULL)
+				IdleAreas.Add(PossibleIdleSpot);
+		}
+	}
 
 }
 
+void AKitchen::KitchenInteract(ANpc* MyNpc, UObject* LastTarget)
+{
+	int32 TotalRoomActions = Seats.Num() + IdleAreas.Num();
+	
+	int32 RandIndex = FMath::RandRange(0, 1);
+	//int32 RandIndex = 2;
+
+	switch (RandIndex)
+	{
+	case 0:
+		if (Seats.Num() > 0)
+		{
+			int32 VarIndex;
+
+			if (Seats.Num() == 1) //RandRange won't work with no range
+				VarIndex = 0;
+			else
+				VarIndex = FMath::RandRange(0, Seats.Num() - 1);
+
+			FString Action = "Sit";
+			NewTargetAction(LastTarget, VarIndex, MyNpc, Action);
+		}
+
+		break;
+
+	case 1:
+		if (IdleAreas.Num() > 0)
+		{
+			int32 VarIndex;
+
+			if ((IdleAreas.Num() == 1))
+				VarIndex = 0;
+			else
+				VarIndex = FMath::RandRange(0, IdleAreas.Num() - 1);
+
+			FString Action = "Idle";
+			NewTargetAction(LastTarget, VarIndex, MyNpc, Action);
+		}
+
+		break;
+
+	default:
+		break;
+	}
+
+}
+
+
+//make sure we're not going to the same object twice in a row
+void AKitchen::NewTargetAction(UObject * LastTarget, const int32 &VarIndex, ANpc * MyNpc, FString Action)
+{
+	TArray <AActor*> InteractableArray;
+
+	if (Action == "Sit")
+		InteractableArray = Seats;
+	else if (Action == "Idle")
+		InteractableArray = IdleAreas;
+
+	if (LastTarget != InteractableArray[VarIndex])
+	{
+		MyNpc->SetTarget(InteractableArray[VarIndex]); //updates npc, AI, then Target<Object> blackboard
+		MyNpc->SetAction(Action);
+	}
+	else
+	{
+		if ((VarIndex + 1) < (InteractableArray.Num() - 1))
+		{
+			MyNpc->SetTarget(InteractableArray[VarIndex + 1]);
+			MyNpc->SetAction(Action);
+		}
+		else if ((VarIndex - 1) > -1)
+		{
+			MyNpc->SetTarget(InteractableArray[VarIndex - 1]);
+			MyNpc->SetAction(Action);
+		}
+		else if (IdleAreas.Num() > 0) //fallback for single object - goto idle area
+		{
+			MyNpc->SetTarget(IdleAreas[0]);
+			MyNpc->SetAction("Idle");
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "You've made the AI very angry. Watch your back!");
+		}
+	}
+}
 

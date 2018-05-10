@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Rooms/Room.h"
 #include "FamilyRoom.generated.h"
 
 UCLASS()
-class LANDLORDFANTASY_API AFamilyRoom : public AActor
+class LANDLORDFANTASY_API AFamilyRoom : public ARoom
 {
 	GENERATED_BODY()
 	

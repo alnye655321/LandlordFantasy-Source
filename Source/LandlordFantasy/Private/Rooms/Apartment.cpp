@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "LandlordFantasy.h"
+#include "NPCs/Npc.h"
 #include "Apartment.h"
 
 
@@ -25,6 +26,9 @@ AApartment::AApartment()
 void AApartment::BeginPlay()
 {
 	//Super::BeginPlay();
+
+	ApartmentCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &AApartment::OnPlayerEnterPickupBox);
+	ApartmentCollisionBox->OnComponentEndOverlap.AddDynamic(this, &AApartment::OnPlayerLeavePickupBox);
 	
 }
 
@@ -35,3 +39,35 @@ void AApartment::Tick(float DeltaTime)
 
 }
 
+void AApartment::OnPlayerEnterPickupBox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+{
+	//SendToRoom(OtherActor);
+}
+
+
+void AApartment::SendToRoom(AActor * OtherActor)
+{
+	ANpc* PossibleNpc = Cast<ANpc>(OtherActor);
+
+	if (PossibleNpc != NULL)
+	{
+		TArray <AActor*> OverlappingRooms;
+
+		GetOverlappingActors(OverlappingRooms); //get all rooms in this apartment
+
+		for (auto OverlappingRoom : OverlappingRooms)
+		{
+			ARoom* PossibleRoom = Cast<ARoom>(OverlappingRoom);
+
+			if (PossibleRoom != NULL)
+				RoomsInApartment.Add(PossibleRoom);
+		}
+
+		PossibleNpc->ChooseRoomDestination(RoomsInApartment);
+
+	}
+}
+
+void AApartment::OnPlayerLeavePickupBox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+}

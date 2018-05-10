@@ -1,11 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "LandlordFantasy.h"
+#include "BedRoom.h"
 #include "NPCs/Npc.h"
 #include "Rooms/Globals/Items/Seat.h"
 #include "Rooms/BedRoom/Items/Bed.h"
 #include "Rooms/IdleArea.h"
-#include "BedRoom.h"
+#include "Rooms/RoomEntryPoint.h"
 
 
 // Sets default values
@@ -28,10 +29,30 @@ ABedRoom::ABedRoom()
 // Called when the game starts or when spawned
 void ABedRoom::BeginPlay()
 {
-	//Super::BeginPlay();
+	Super::BeginPlay();
 
 	CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ABedRoom::OnPlayerEnterPickupBox);
 	CollisionBox->OnComponentEndOverlap.AddDynamic(this, &ABedRoom::OnPlayerLeavePickupBox);
+
+
+	//set entry point as X Spot RoomEntryPoint actor - will use for move to AI actions entering room
+	TArray <AActor*> OverlappingActors;
+
+	GetOverlappingActors(OverlappingActors);
+
+	for (auto OverlappingActor : OverlappingActors)
+	{
+		ARoomEntryPoint* PossibleEntryPoint = Cast<ARoomEntryPoint>(OverlappingActor);
+
+		if (PossibleEntryPoint != NULL)
+		{
+			SetXSpotLocation(PossibleEntryPoint);
+			break;
+		}
+
+	}
+
+
 	
 }
 
@@ -50,10 +71,13 @@ void ABedRoom::OnPlayerEnterPickupBox(UPrimitiveComponent * OverlappedComp, AAct
 
 	ANpc* PossibleNpc = Cast<ANpc>(OtherActor);
 
-	if (PossibleNpc != NULL)
+	if (PossibleNpc != NULL && PossibleNpc->GetDesiredRoom() == "BedRoom")
 	{
+		FString AIFindRoom = "found";
+		PossibleNpc->SetAIFindRoom(AIFindRoom); //no longer looking for rooms in BT
+
 		FString Room = "BedRoom";
-		PossibleNpc->SetRoom(Room);
+		PossibleNpc->SetRoom(Room); //set AI value for referance
 
 		TArray <AActor*> OverlappingActors;
 

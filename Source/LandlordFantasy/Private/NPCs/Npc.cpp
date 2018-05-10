@@ -13,6 +13,12 @@ ANpc::ANpc()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	NeedsMap.Add(TEXT("Bored"), 100);
+	NeedsMap.Add(TEXT("Hungry"), 0);
+	NeedsMap.Add(TEXT("Sleepy"), 100);
+	NeedsMap.Add(TEXT("Tired"), 100);
+	
+
 }
 
 // Called when the game starts or when spawned
@@ -22,8 +28,12 @@ void ANpc::BeginPlay()
 
 	ANpcAI* AIController = Cast<ANpcAI>(GetController());
 
-	//in behavior tree setting room to none means move to a new room
-	FString NoRoom = "None"; //find a room to begin play
+	//find a room entry point target
+	FString EntryRoomTarget = "None"; //find a room to begin play
+	AIController->SetDesiredRoomKey(EntryRoomTarget);
+
+	//in behavior tree setting room to none means not in any room
+	FString NoRoom = "None";
 	SetRoom(NoRoom);
 
 	TArray<AActor*> FoundActors;
@@ -94,6 +104,12 @@ void ANpc::SetIsInteracting(bool IsInteractingCondition)
 	AIController->SetIsInteracting(IsInteractingCondition);
 }
 
+void ANpc::SetAIFindRoom(FString NewStringCondition)
+{	
+	ANpcAI* AIController = Cast<ANpcAI>(GetController()); // update AI which sets BlackBoard key
+	AIController->SetFindRoom(NewStringCondition);
+}
+
 bool ANpc::getIsInside()
 {
 	return isInside;
@@ -107,11 +123,74 @@ void ANpc::setIsInside(bool inside)
 	AIController->setIsInside(inside);
 }
 
+FVector ANpc::AnimPositionVector(AActor* MyTargetActor, float ForwardOffset, float RightOffset, float UpOffset)
+{
+	TargetActor = MyTargetActor;
+
+	FVector MyTargetLoc = TargetActor->GetActorLocation();
+	FVector MyTargetForward = TargetActor->GetActorForwardVector();
+	FVector MyTargetRight = TargetActor->GetActorRightVector();
+	FVector MyTargetUp = TargetActor->GetActorUpVector();
+
+	FVector MyTargetMult = UKismetMathLibrary::Multiply_VectorFloat(MyTargetForward, ForwardOffset);
+	FVector MyTargetMult2 = UKismetMathLibrary::Multiply_VectorFloat(MyTargetRight, RightOffset);
+	FVector MyTargetMult3 = UKismetMathLibrary::Multiply_VectorFloat(MyTargetUp, UpOffset);
+
+	FVector CombinedVector = UKismetMathLibrary::Add_VectorVector(MyTargetLoc, MyTargetMult);
+	FVector CombinedVector2 = UKismetMathLibrary::Add_VectorVector(CombinedVector, MyTargetMult2);
+	FVector CombinedVector3 = UKismetMathLibrary::Add_VectorVector(CombinedVector2, MyTargetMult3);
+
+	FTransform VectorTransform = UKismetMathLibrary::Conv_VectorToTransform(CombinedVector3);
+
+	return VectorTransform.GetLocation();
+
+}
+
+FRotator ANpc::AnimPositionRotator(AActor * MyTargetActor, float OffsetRoll, float OffsetPitch, float OffsetYaw)
+{
+	FVector TargetVector = MyTargetActor->GetActorForwardVector();
+	//FRotator TargetRotation = UKismetMathLibrary::MakeRotFromX(TargetVector);
+
+	FVector MyTargetForward = MyTargetActor->GetActorForwardVector();
+	FVector MyTargetRight = MyTargetActor->GetActorRightVector();
+	FRotator TargetRotation = UKismetMathLibrary::MakeRotFromXY(MyTargetForward, MyTargetRight);
+
+
+	TargetRotation.Roll += OffsetRoll;
+	TargetRotation.Pitch += OffsetPitch;
+	TargetRotation.Yaw += OffsetYaw;
+
+	return TargetRotation;
+}
+
+//called when entering apartment
+void ANpc::ChooseRoomDestination(TArray <AActor*> RoomsInApartment)
+{
+	ANpcAI* AIController = Cast<ANpcAI>(GetController());
+
+	AIController->DesiredRoom(NeedsMap, RoomsInApartment);
+
+}
+
 void ANpc::SetRoom(FString Room)
 {
 
 	ANpcAI* AIController = Cast<ANpcAI>(GetController()); // update AI which sets BlackBoard key
 	AIController->SetCurrentRoom(Room);
+}
+
+void ANpc::SetDesiredRoom(FString Room)
+{
+
+	ANpcAI* AIController = Cast<ANpcAI>(GetController()); // update AI which sets BlackBoard key
+	AIController->SetDesiredRoomKey(Room);
+}
+
+FString ANpc::GetDesiredRoom()
+{
+	ANpcAI* AIController = Cast<ANpcAI>(GetController()); // update AI which sets BlackBoard key
+	FString DesiredRoomKey = AIController->GetDesiredRoomKey();
+	return DesiredRoomKey;
 }
 
 void ANpc::SetAction(FString Action)
@@ -135,4 +214,6 @@ void ANpc::facePlayer()
 	}
 
 }
+
+
 
